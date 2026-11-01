@@ -79,10 +79,12 @@ Después baje por el cuaderno y trabaje cada módulo en orden. Los ECG son **rea
 form(SETUP),
 form('''
 #@title 📂 Paso 1 · Cargar los ECG de la clase
-#@markdown Si su profesor le dio un enlace al banco de casos, péguelo aquí; si no, deje vacío.
+#@markdown Use **una** opción: pegue el enlace al banco de casos, **o** marque la casilla para subir el archivo
+#@markdown `casos_st_verificados.csv` que le dio su profesor. Si deja ambas vacías se arma un banco provisional.
 URL_BANCO = ""  #@param {type:"string"}
+SUBIR_CSV = False  #@param {type:"boolean"}
 db, scp = cargar_metadatos()
-banco = cargar_banco(URL_BANCO or None, db, scp, n=12)
+banco = cargar_banco(URL_BANCO or None, db, scp, n=12, subir=SUBIR_CSV)
 '''),
 md('''
 ## Módulo 0 · Código Infarto: dónde encaja lo que va a aprender
@@ -107,8 +109,8 @@ El rombo **"¿Trazo compatible con IAM CEST?"** es la decisión que usted va a e
 reconocer la elevación del ST es miocardio perdido; por eso la práctica (Módulo 5) mide también **su tiempo de
 decisión** y le pide verificar si se cumplió la **meta de 10 minutos**.
 
-*Esquema simplificado del Protocolo de Atención Integral Código Infarto del IMSS; consulte la versión vigente de
-su institución para tiempos y criterios de reperfusión.*
+*Esquema simplificado del Protocolo de Atención Integral de Código Infarto del IMSS (actualización, octubre de
+2025); consulte el documento completo para tiempos y criterios de reperfusión.*
 '''),
 md('''
 ## Módulo 1 · El papel del ECG
@@ -194,6 +196,33 @@ Una sola derivación elevada **no** cumple el criterio. Dos derivaciones elevada
 **"Nueva"** significa que no estaba en un ECG previo. Con un solo trazo no se puede saber; en la práctica clínica,
 ante un paciente con síntomas, una elevación que cumple el criterio se trata como nueva hasta demostrar lo
 contrario (compare con ECG previos cuando existan, sin retrasar la activación).
+
+### En la literatura mexicana: RENASICA III
+
+El Tercer Registro Nacional de Síndromes Coronarios Agudos (RENASICA III) clasifica los síndromes coronarios agudos
+según el ECG en cuatro grupos:
+
+| Grupo | Definición en RENASICA III |
+|---|---|
+| a) Normal o inespecífico | Depresión del ST < 0.05 mV u onda T negativa asimétrica < 0.2 mV; hipertrofia ventricular; ritmo de marcapasos |
+| b) Depresión del ST | Depresión > 0.05 mV en dos derivaciones contiguas u onda T negativa simétrica > 0.2 mV |
+| c) Elevación transitoria del ST | Pendiente positiva del punto J (> 0.2 mV en V1–V3 y > 0.1 mV en las demás) en dos derivaciones contiguas, que se normaliza o deja una T negativa profunda, de forma espontánea o tras el tratamiento |
+| d) Elevación persistente del ST | Pendiente positiva del punto J (> 0.2 mV en V1–V3 y > 0.1 mV en las demás) en dos derivaciones contiguas |
+
+Compárelo con el criterio que usa este taller:
+
+- **Coinciden** en lo esencial: medición en el **punto J**, **2 derivaciones contiguas** y 1 mm (0.1 mV) en las
+  derivaciones fuera de V1–V3.
+- **Difieren** en las precordiales: RENASICA III usa un umbral único **> 2 mm en V1–V3**; la Quinta Definición
+  Universal (2026) usa umbrales **≥** para **V2–V3 según sexo y edad** (1.5 / 2.0 / 2.5 mm) y ≥ 1 mm en V1. Note
+  también que RENASICA III escribe "mayor que" (>) y la Quinta Definición "mayor o igual" (≥). Este taller aplica
+  la Quinta Definición, que es la vigente.
+- RENASICA III distingue **elevación transitoria** de **persistente**, lo que exige ECG seriados; con un solo trazo,
+  como en este taller, solo se reconoce la elevación en ese momento.
+
+RENASICA III también describe criterios de infarto con bloqueo de rama izquierda (escuela mexicana de
+electrocardiografía: Sodi-Pallares; y Sgarbossa: elevación concordante ≥ 1 mm, depresión ≥ 1 mm en V1–V3 con S
+dominante, elevación discordante ≥ 5 mm). Esos criterios se verán en una fase posterior.
 '''),
 form('''
 #@title ✏️ Ejercicios: ¿cumple el criterio de contigüidad?
@@ -248,10 +277,11 @@ demora.
    doi:10.1161/CIR.0000000000001477
 2. Byrne RA, et al. 2023 ESC Guidelines for the management of acute coronary syndromes. *Eur Heart J*.
    2023;44(38):3720–3826.
-3. Instituto Mexicano del Seguro Social. Protocolo de Atención Integral: Código Infarto.
-4. Wagner P, et al. PTB-XL, a large publicly available electrocardiography dataset. *Sci Data*. 2020;7:154.
-5. Goldberger AL, et al. PhysioBank, PhysioToolkit, and PhysioNet. *Circulation*. 2000;101:e215–e220.
-6. Kligfield P, et al. Recommendations for the standardization and interpretation of the electrocardiogram, part I.
+3. Instituto Mexicano del Seguro Social. Protocolo de Atención Integral de Código Infarto. Actualización. México: IMSS; octubre de 2025.
+4. Jerjes-Sánchez C, Martínez-Sánchez C, Borrayo-Sánchez G, Carrillo-Calvillo J, Juárez-Herrera U, Quintanilla-Gutiérrez J. Third national registry of acute coronary syndromes (RENASICA III). *Arch Cardiol Mex*. 2015;85:207–214.
+5. Wagner P, et al. PTB-XL, a large publicly available electrocardiography dataset. *Sci Data*. 2020;7:154.
+6. Goldberger AL, et al. PhysioBank, PhysioToolkit, and PhysioNet. *Circulation*. 2000;101:e215–e220.
+7. Kligfield P, et al. Recommendations for the standardization and interpretation of the electrocardiogram, part I.
    *Circulation*. 2007;115:1306–1324.
 {LIC}
 '''),

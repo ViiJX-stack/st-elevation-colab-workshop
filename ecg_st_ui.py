@@ -28,8 +28,12 @@ def candidatos(db, scp):
     final la hace la medición en el punto J y, después, el instructor.
     """
     desc = scp['description'].astype(str).str.lower()
-    cod_lesion = set(scp.index[desc.str.contains('injury') | (scp.index == 'STE_')])
+    # STE_ = elevación del ST inespecífica (la única declaración de PTB-XL que describe elevación).
+    # Clase MI = infarto (con frecuencia antiguo). INJ* = 'subendocardial injury' = DEPRESIÓN del ST:
+    # se dejan al final; la medición en el punto J decide.
+    cod_lesion = {'STE_'} & set(scp.index)
     cod_im = set(scp.index[scp.get('diagnostic_class', pd.Series(index=scp.index)).astype(str) == 'MI'])
+    cod_im |= set(scp.index[desc.str.contains('injury')])
 
     limpio = pd.Series(True, index=db.index)
     for c in COLUMNAS_RUIDO:
@@ -96,9 +100,13 @@ def construir_banco(db, scp, n_ste=30, n_ctrl=30, semilla=2026, max_revisar=400,
     return banco
 
 
-def cargar_banco(url=None, db=None, scp=None, n=12):
-    """Banco verificado (CSV del instructor) o, si no hay, uno provisional pequeño."""
-    if url:
+def cargar_banco(url=None, db=None, scp=None, n=12, subir=False):
+    """Banco verificado (CSV del instructor: enlace o archivo subido) o, si no hay, uno provisional pequeño."""
+    if subir:
+        from google.colab import files
+        up = files.upload()
+        url = io.BytesIO(next(iter(up.values())))
+    if url is not None and url != '':
         banco = pd.read_csv(url)
         if 'verificado' in banco.columns and banco['verificado'].any():
             banco = banco[banco['verificado']]
