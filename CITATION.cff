@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "Si usa este material, cítelo así / If you use this material, please cite it as below."
+title: "Entorno virtual: reconocimiento de la elevación del segmento ST (Fase 1)"
+type: software
+version: 0.9.0
+date-released: 2026-10-30
+license: MIT
+authors:
+  - family-names: Godínez-Vázquez
+    given-names: Víctor Junior
+    affiliation: "COMPLETAR"
+    orcid: "https://orcid.org/COMPLETAR"
+keywords:
+  - electrocardiography
+  - ST-segment elevation
+  - medical education
+  - Google Colab
+  - PTB-XL
+  - open science
