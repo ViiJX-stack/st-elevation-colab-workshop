@@ -60,13 +60,15 @@ md(f'''
 # Entorno virtual · Reconocimiento de la elevación del segmento ST
 ### Fase 1 — solo elevación del ST
 
-**Contexto: Código Infarto (IMSS).** Ante una persona con dolor en el pecho de menos de 12 h de evolución,
+**Contexto: Quinta Definición Universal del Infarto, ICAT³ y Código Infarto (IMSS).** Ante una persona con dolor
+en el pecho de menos de 12 h de evolución,
 el ECG de 12 derivaciones debe tomarse **en los primeros 10 minutos** de su llegada y leerse de inmediato:
 si el trazo es compatible con **IAM con elevación del ST (IAM CEST)**, se establece el "tiempo 0" y se activa el
 Código Infarto. Este entorno entrena exactamente ese paso: **reconocer la elevación del ST con rapidez y precisión**.
 
 **Objetivos de aprendizaje.** Al terminar, usted podrá:
-0. Ubicar el reconocimiento del ECG dentro del algoritmo del Código Infarto (meta: ECG en ≤ 10 min).
+0. Ubicar el reconocimiento del ECG dentro de la Quinta Definición Universal del Infarto, la cadena ICAT³ y el
+   Código Infarto del IMSS (meta: ECG en ≤ 10 min).
 1. Identificar la **línea de base** (segmento PR) de cada derivación.
 2. Ubicar el **punto J** (final del QRS).
 3. Medir el **desnivel del ST en milímetros** y compararlo con el umbral que corresponde al paciente.
@@ -87,7 +89,53 @@ db, scp = cargar_metadatos()
 banco = cargar_banco(URL_BANCO or None, db, scp, n=12, subir=SUBIR_CSV)
 '''),
 md('''
-## Módulo 0 · Código Infarto: dónde encaja lo que va a aprender
+## Módulo 0 · Quinta Definición Universal del Infarto (2026): el papel del ECG
+
+El ECG de 12 derivaciones es la piedra angular para identificar con rapidez al paciente con síntomas de infarto
+por **oclusión coronaria aguda**, que necesita **reperfusión inmediata**.
+
+**Diagnóstico de trabajo de IAM CEST:** elevación **nueva** del segmento ST, medida en el **punto J**, en **al menos
+dos derivaciones contiguas**, en ausencia de hipertrofia ventricular izquierda o bloqueo de rama izquierda. Los
+umbrales en milímetros (distintos en V2–V3 según sexo y edad) se trabajan en el Módulo 6.
+
+**Por qué no basta con los milímetros:** hasta **1 de cada 4** pacientes tratados como infarto *sin* elevación
+clásica del ST tiene la arteria responsable ocluida. Por eso la Quinta Definición reconoce **patrones equivalentes**
+de oclusión coronaria aguda (se listan en la Conclusión). El criterio es una herramienta para decidir; la decisión
+es **clínica**: síntomas + ECG + alta sospecha.
+'''),
+md('''
+## Módulo 1 · ICAT³ y el algoritmo de IAM México
+
+**ICAT³** es la cadena de atención del *Programa Nacional para la Reducción de la Mortalidad por Infarto Agudo al
+Miocardio IAM_MX (PREMIA)*: **I**dentificación · **C**onfirmación · **A**ctivación · **T**ratamiento · **T**raslado ·
+re**T**orno.
+
+```
+Dolor precordial → Centro de primer contacto → ECG en < 10 min
+        │
+        ├── Sin elevación del ST
+        │
+        └── Con elevación del ST (hasta 12 h del inicio de los síntomas)
+                 ├── ¿Traslado < 60 min? → ACTPp (angioplastía coronaria transluminal percutánea primaria)
+                 └── ¿Traslado > 60 min? → Protocolo de fibrinólisis en < 10 min + tratamiento adjunto
+                          ├── ¿Contraindicaciones? Sí → ACTPp
+                          └── No → Fibrinólisis → comunicación + traslado → estrategia farmacoinvasiva
+```
+
+**La reperfusión salva vidas.** Está indicada en las primeras **12 horas** desde el inicio de los síntomas, y el
+beneficio es mayor cuanto antes se inicia (sobre todo en las primeras 3 horas). Hay dos estrategias: **ACTPp** y
+**estrategia farmacoinvasiva** (fibrinólisis urgente seguida de angioplastía temprana).
+
+**Los tres retrasos principales en México:**
+1. **Tiempo al diagnóstico:** del primer contacto médico a obtener **e interpretar** el ECG.
+2. **Tiempo de traslado:** del diagnóstico a la llegada a un centro capaz de reperfundir.
+3. **Tiempos puerta-aguja y puerta-balón:** de la llegada a ese centro al inicio del fibrinolítico o de la angioplastía.
+
+**Este taller entrena los eslabones I y C** (identificación y confirmación): reducir el **tiempo al diagnóstico**
+leyendo bien y rápido el ECG.
+'''),
+md('''
+## Módulo 2 · Código Infarto (IMSS): dónde encaja lo que va a aprender
 
 ```
 Persona con dolor en el pecho < 12 h
@@ -106,14 +154,14 @@ Reperfusión: ICP primaria (< 90 min, si hay hemodinamia en < 2 h) o fibrinólis
 ```
 
 El rombo **"¿Trazo compatible con IAM CEST?"** es la decisión que usted va a entrenar. Cada minuto de retraso en
-reconocer la elevación del ST es miocardio perdido; por eso la práctica (Módulo 5) mide también **su tiempo de
+reconocer la elevación del ST es miocardio perdido; por eso la práctica (Módulo 7) mide también **su tiempo de
 decisión** y le pide verificar si se cumplió la **meta de 10 minutos**.
 
 *Esquema simplificado del Protocolo de Atención Integral de Código Infarto del IMSS (actualización, octubre de
 2025); consulte el documento completo para tiempos y criterios de reperfusión.*
 '''),
 md('''
-## Módulo 1 · El papel del ECG
+## Módulo 3 · El papel del ECG
 
 | En el papel | Equivale a |
 |---|---|
@@ -136,7 +184,7 @@ graficar_12(_an1['senal'], _an1['fs'], 'ECG de ejemplo — observe el pulso de c
 plt.show()
 '''),
 md('''
-## Módulo 2 · Anatomía del segmento ST
+## Módulo 4 · Anatomía del segmento ST
 
 Tres puntos de referencia, siempre en este orden:
 
@@ -155,7 +203,7 @@ graficar_anatomia(_an1, _lead)
 plt.show()
 '''),
 md('''
-## Módulo 3 · Taller de medición
+## Módulo 5 · Taller de medición
 
 Ahora mida usted. Para cada derivación:
 1. Mueva el control **Punto J** hasta donde termina el QRS (línea morada).
@@ -169,7 +217,7 @@ form('''
 taller = TallerMedicion(banco)
 '''),
 md('''
-## Módulo 4 · Umbrales y derivaciones contiguas
+## Módulo 6 · Umbrales y derivaciones contiguas
 
 **Criterio de IAM CEST** (Quinta Definición Universal del Infarto, ESC/ACC/AHA/WHF, 2026): elevación **nueva** del ST
 en el punto J en **≥ 2 derivaciones contiguas**, **en ausencia de bloqueo de rama y/o hipertrofia ventricular
@@ -229,7 +277,7 @@ form('''
 ejercicios_contiguas()
 '''),
 md('''
-## Módulo 5 · Práctica deliberada
+## Módulo 7 · Práctica deliberada
 
 Aquí aprende de verdad: muchos casos, respuesta inmediata. Cada caso llega como en urgencias, con una viñeta
 breve (ficticia) de Código Infarto. Primero verifique si se cumplió la meta de **ECG en ≤ 10 min**; luego lea el
@@ -250,9 +298,14 @@ form('''
 practica = Practica(banco)
 '''),
 md(f'''
-## Cierre
+## Conclusión
 
-**Algoritmo de 4 pasos:** calibración → línea de base y punto J → medir contra el umbral del paciente → ≥ 2 contiguas.
+**Lo más importante es el razonamiento clínico.** Los milímetros son una herramienta, no el objetivo. En un paciente
+con síntomas compatibles, una elevación limítrofe, dudosa o un patrón equivalente exigen **alta sospecha**: repita el
+ECG, compárelo con trazos previos, consulte de inmediato (cardiólogo de la red) y **no espere a los biomarcadores**.
+Lo que salva miocardio es identificar, confirmar y activar a tiempo (ICAT³).
+
+**Algoritmo de 4 pasos para leer el ECG:** calibración → línea de base y punto J → medir contra el umbral del paciente → ≥ 2 contiguas.
 
 **Lo que esta fase NO cubre** (no generalice todavía). Estos casos se excluyeron del banco a propósito y se
 abordarán en fases posteriores:
@@ -278,10 +331,11 @@ demora.
 2. Byrne RA, et al. 2023 ESC Guidelines for the management of acute coronary syndromes. *Eur Heart J*.
    2023;44(38):3720–3826.
 3. Instituto Mexicano del Seguro Social. Protocolo de Atención Integral de Código Infarto. Actualización. México: IMSS; octubre de 2025.
-4. Jerjes-Sánchez C, Martínez-Sánchez C, Borrayo-Sánchez G, Carrillo-Calvillo J, Juárez-Herrera U, Quintanilla-Gutiérrez J. Third national registry of acute coronary syndromes (RENASICA III). *Arch Cardiol Mex*. 2015;85:207–214.
-5. Wagner P, et al. PTB-XL, a large publicly available electrocardiography dataset. *Sci Data*. 2020;7:154.
-6. Goldberger AL, et al. PhysioBank, PhysioToolkit, and PhysioNet. *Circulation*. 2000;101:e215–e220.
-7. Kligfield P, et al. Recommendations for the standardization and interpretation of the electrocardiogram, part I.
+4. Programa Nacional para la Reducción de la Mortalidad por Infarto Agudo al Miocardio IAM_MX (PREMIA). Infarto agudo al miocardio. Grupo de Reperfusión en el Infarto Agudo al Miocardio, A.C.; 2017. Disponible en: calidad.salud.gob.mx/site/iam/docs/iam_01.pdf
+5. Jerjes-Sánchez C, Martínez-Sánchez C, Borrayo-Sánchez G, Carrillo-Calvillo J, Juárez-Herrera U, Quintanilla-Gutiérrez J. Third national registry of acute coronary syndromes (RENASICA III). *Arch Cardiol Mex*. 2015;85:207–214.
+6. Wagner P, et al. PTB-XL, a large publicly available electrocardiography dataset. *Sci Data*. 2020;7:154.
+7. Goldberger AL, et al. PhysioBank, PhysioToolkit, and PhysioNet. *Circulation*. 2000;101:e215–e220.
+8. Kligfield P, et al. Recommendations for the standardization and interpretation of the electrocardiogram, part I.
    *Circulation*. 2007;115:1306–1324.
 {LIC}
 '''),
@@ -306,7 +360,8 @@ Este cuaderno **no es para los alumnos**. Construye el banco de ECG que usa el e
    - **Controles:** ninguna derivación por arriba del 60 % de su umbral (normales inequívocos).
 3. **Usted verifica cada caso** (aceptar como STE / Control, o excluir) y corrige el punto J si hace falta.
    Solo los casos verificados llegan a los alumnos.
-4. Exporte el CSV, súbalo a su GitHub y pegue el enlace *raw* en el Paso 1 del cuaderno del alumno.
+4. Exporte el CSV y entréguelo a los alumnos: en el Paso 1 de su cuaderno marcan **SUBIR_CSV** y lo suben
+   (o, si el repositorio es público, pegan el enlace *raw*).
 
 > Recomendado: que un segundo médico verifique de forma independiente y reportar la concordancia.
 {LIC}
